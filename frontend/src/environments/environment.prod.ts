@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  BACKEND_PUBLIC_DOMAIN: '' // TODO: Replace with your backend service's public domain here (including https://)
+  BACKEND_PUBLIC_DOMAIN: 'https://backend-production-7644.up.railway.app'
 };
