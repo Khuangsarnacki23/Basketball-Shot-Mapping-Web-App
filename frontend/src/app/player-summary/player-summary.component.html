@@ -1,0 +1,136 @@
+<div class="stat-container">
+<div class="controls">
+    <label>
+      Player:
+      <select [(ngModel)]="selectedPlayerId">
+        <option value="all">All</option>
+        <option *ngFor="let p of players" [ngValue]="p.id">{{ p.name }}</option>
+      </select>
+    </label>
+  
+    <label><input type="checkbox" [(ngModel)]="showShots" /> Shots</label>
+    <label><input type="checkbox" [(ngModel)]="showPasses" /> Passes</label>
+    <label><input type="checkbox" [(ngModel)]="showTurnovers" /> Turnovers</label>
+  </div>
+  <div class="court-container">
+  <!-- Court -->
+  <div class="court-wrapper">
+    <svg class="court" [attr.viewBox]="'0 0 ' + viewW + ' ' + viewH" preserveAspectRatio="xMidYMin meet" style="overflow:visible;">
+
+  <rect x="0" y="0"
+  [attr.width]="PSM.CourtGeometry.VIEW_W"
+  [attr.height]="PSM.CourtGeometry.VIEW_H"
+  fill="#f6d7a8"></rect>
+
+  <!-- outer border -->
+  <rect x="0" y="0"
+  [attr.width]="PSM.CourtGeometry.VIEW_W"
+  [attr.height]="PSM.CourtGeometry.VIEW_H"
+  fill="none" stroke="#333" stroke-width="2"></rect>
+
+  <!-- baseline at y = -4 -->
+  <line [attr.x1]="PSM.CourtGeometry.toSvgX(-25)"
+  [attr.y1]="PSM.CourtGeometry.toSvgY(-4)"
+  [attr.x2]="PSM.CourtGeometry.toSvgX( 25)"
+  [attr.y2]="PSM.CourtGeometry.toSvgY(-4)"
+  stroke="#333" stroke-width="2"></line>
+
+  <!-- rim (centered over origin) -->
+  <circle [attr.cx]="PSM.CourtGeometry.toSvgX(0)"
+    [attr.cy]="PSM.CourtGeometry.toSvgY(0)"
+    [attr.r]="PSM.CourtGeometry.HOOP_RADIUS_FT * PSM.CourtGeometry.PX_PER_FT"
+    fill="none" stroke="#e67e22" stroke-width="2"></circle>
+
+    <circle
+    [attr.cx]="PSM.CourtGeometry.toSvgX(0)"
+    [attr.cy]="PSM.CourtGeometry.toSvgY(0)"
+    [attr.r]="3.9 * PSM.CourtGeometry.PX_PER_FT"
+    fill="none" stroke="#333" stroke-dasharray="4 3" stroke-width="1.5">
+  </circle>
+
+<!-- paint (lane) from baseline y=-4 to FT line y=15, width 16 -->
+<rect
+  [attr.x]="PSM.CourtGeometry.toSvgX(-PSM.CourtGeometry.LANE_WIDTH_FT/2)"
+  [attr.y]="PSM.CourtGeometry.toSvgY(15)"
+  [attr.width]="PSM.CourtGeometry.LANE_WIDTH_FT * PSM.CourtGeometry.PX_PER_FT"
+  [attr.height]="(15 - (-4)) * PSM.CourtGeometry.PX_PER_FT" 
+  fill="#ffe4c4" stroke="#333" stroke-width="1.5">
+</rect>
+
+  <!-- FT circle (top solid, bottom dashed) -->
+  <path [attr.d]="PSM.CourtGeometry.ftTopPath()"
+  stroke="#333" fill="none" stroke-width="1.5"></path>
+  <path [attr.d]="PSM.CourtGeometry.ftBottomPath()"
+  stroke="#333" fill="none" stroke-width="1.5" stroke-dasharray="4 3"></path>
+
+  <!-- Corner 3 verticals up to y=7.8 -->
+  <line [attr.x1]="PSM.CourtGeometry.toSvgX(-22)"
+  [attr.y1]="PSM.CourtGeometry.toSvgY(-4)"
+  [attr.x2]="PSM.CourtGeometry.toSvgX(-22)"
+  [attr.y2]="PSM.CourtGeometry.toSvgY(7.8)"
+  stroke="#333" stroke-width="1.5"></line>
+  <line [attr.x1]="PSM.CourtGeometry.toSvgX(22)"
+  [attr.y1]="PSM.CourtGeometry.toSvgY(-4)"
+  [attr.x2]="PSM.CourtGeometry.toSvgX(22)"
+  [attr.y2]="PSM.CourtGeometry.toSvgY(7.8)"
+  stroke="#333" stroke-width="1.5"></line>
+
+  <!-- Above-the-break 3 arc (connects the two breaks at y=7.8) -->
+  <path [attr.d]="PSM.CourtGeometry.threeArcPath()"
+  stroke="#333" fill="none" stroke-width="1.5"></path>
+
+      <g *ngFor="let e of filteredEvents">
+        <circle
+          [attr.cx]="e.svgX"
+          [attr.cy]="e.svgY"
+          [attr.r]="markerRadius(e)"
+          [attr.fill]="colorForAction(e.actionType)"
+          fill-opacity="0.85"
+          stroke="#111" stroke-width="0.5">
+        </circle>
+        <title>
+          {{ playerName(e.playerId) }} • {{ e.actionType }}
+          • Zone: {{ e.zone }}
+          • Dist: {{ e.distanceFromHoopFt | number:'1.0-1' }} ft
+          {{ e.actionType === 'shot' && e.made ? '• MADE' : '' }}
+        </title>
+      </g>
+    </svg>
+  </div>
+  
+  <!-- Zone summary -->
+  <div class="zone-summary">
+    <h4>Events by zone ({{ selectedPlayerLabel }})</h4>
+    <table>
+      <thead><tr><th>Zone</th><th>Count</th></tr></thead>
+      <tbody>
+        <tr *ngFor="let z of zoneCounts"><td>{{ z.zone }}</td><td>{{ z.count }}</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+  <!-- Player table w/ counts & ranks -->
+  <div class="players-table" style="padding-bottom:50px; padding-top:10px;">
+    <b><h2> Player counting stats </h2> </b>
+    <table>
+      <thead>
+        <tr>
+          <th>Player</th>
+          <th>Shots (rank)</th>
+          <th>Points (rank)</th>
+          <th>Passes (rank)</th>
+          <th>Turnovers (rank)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let s of summaries">
+          <td>{{ s.player.name }}</td>
+          <td>{{ s.counts.totalShotAttempts }} <small *ngIf="s.ranks">(#{{ s.ranks.totalShotAttemptsRank }})</small></td>
+          <td>{{ s.counts.totalPoints }} <small *ngIf="s.ranks">(#{{ s.ranks.totalPointsRank }})</small></td>
+          <td>{{ s.counts.totalPasses }} <small *ngIf="s.ranks">(#{{ s.ranks.totalPassesRank }})</small></td>
+          <td>{{ s.counts.totalTurnovers }} <small *ngIf="s.ranks">(#{{ s.ranks.totalTurnoversRank }})</small></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

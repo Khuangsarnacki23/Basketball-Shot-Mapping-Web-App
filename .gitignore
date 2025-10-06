@@ -1,0 +1,9 @@
+.python-version
+.DS_Store
+
+frontend/node_modules
+frontend/dist/*
+!frontend/dist/3rdpartylicenses.txt
+!frontend/dist/styles.css
+
+__pycache__/

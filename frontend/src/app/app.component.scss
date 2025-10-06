@@ -1,0 +1,32 @@
+@import '../vars.scss';
+
+app-component {
+  font-family: 'Roboto';
+
+  #app-header {
+    width: 100%;
+    height: 60px;
+    line-height: 60px;
+    background-color: $color-thunder-blue;
+    color: white;
+    font-size: 30px;
+    font-weight: bold;
+    text-transform: uppercase;
+    padding-left: 20px;
+    box-sizing: border-box;
+  }
+
+  .mat-tab-list {
+    .mat-ink-bar {
+      background-color: $color-thunder-blue !important;
+    }
+  }
+  .controls { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-bottom: 8px; align-self: center; }
+  .stat-container { width:100%; height:100%; align-items:center; display:flex; flex-direction:column; padding-bottom:50px; padding-top:50px;}
+  .court-wrapper { width: 100%; max-width: 650px; border: 1px solid #ddd; border-radius: 8px; background: #faf7f2; }
+  .court { width: 100%; height: auto; display: block; }
+  .zone-summary, .players-table { margin-top: 12px; max-width: 650px; }
+  table { width: 100%; border-collapse: collapse; }
+  th, td { padding: 6px 8px; border-bottom: 1px solid #eee; text-align: left; }
+  .court-container {display:flex; flex-direction:row; gap:50px; width:100%; margin-left:1200px;}
+}
