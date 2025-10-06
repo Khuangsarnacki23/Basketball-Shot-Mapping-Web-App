@@ -1,20 +1,20 @@
 <div class="stat-container">
-<div class="controls">
-    <label>
-      Player:
-      <select [(ngModel)]="selectedPlayerId">
-        <option value="all">All</option>
-        <option *ngFor="let p of players" [ngValue]="p.id">{{ p.name }}</option>
-      </select>
-    </label>
-  
-    <label><input type="checkbox" [(ngModel)]="showShots" /> Shots</label>
-    <label><input type="checkbox" [(ngModel)]="showPasses" /> Passes</label>
-    <label><input type="checkbox" [(ngModel)]="showTurnovers" /> Turnovers</label>
-  </div>
   <div class="court-container">
   <!-- Court -->
   <div class="court-wrapper">
+    <div class="controls">
+      <label>
+        Player:
+        <select [(ngModel)]="selectedPlayerId">
+          <option value="all">All</option>
+          <option *ngFor="let p of players" [ngValue]="p.id">{{ p.name }}</option>
+        </select>
+      </label>
+    
+      <label><input type="checkbox" [(ngModel)]="showShots" /> Shots</label>
+      <label><input type="checkbox" [(ngModel)]="showPasses" /> Passes</label>
+      <label><input type="checkbox" [(ngModel)]="showTurnovers" /> Turnovers</label>
+    </div>
     <svg class="court" [attr.viewBox]="'0 0 ' + viewW + ' ' + viewH" preserveAspectRatio="xMidYMin meet" style="overflow:visible;">
 
   <rect x="0" y="0"
@@ -96,22 +96,9 @@
         </title>
       </g>
     </svg>
-  </div>
-  
-  <!-- Zone summary -->
-  <div class="zone-summary">
-    <h4>Events by zone ({{ selectedPlayerLabel }})</h4>
-    <table>
-      <thead><tr><th>Zone</th><th>Count</th></tr></thead>
-      <tbody>
-        <tr *ngFor="let z of zoneCounts"><td>{{ z.zone }}</td><td>{{ z.count }}</td></tr>
-      </tbody>
-    </table>
-  </div>
-</div>
-  <!-- Player table w/ counts & ranks -->
+     <!-- Player table w/ counts & ranks -->
   <div class="players-table" style="padding-bottom:50px; padding-top:80px;">
-    <b><h2> Player counting stats </h2> </b>
+    <b><h2 style="text-align:center;"> Player counting stats </h2> </b>
     <table>
       <thead>
         <tr>
@@ -133,4 +120,18 @@
       </tbody>
     </table>
   </div>
+  </div>
+  
+  <!-- Zone summary -->
+  <div class="zone-summary">
+    <h4>Events by zone ({{ selectedPlayerLabel }})</h4>
+    <table>
+      <thead><tr><th>Zone</th><th>Count</th></tr></thead>
+      <tbody>
+        <tr *ngFor="let z of zoneCounts"><td>{{ z.zone }}</td><td>{{ z.count }}</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
 </div>
